@@ -1,4 +1,4 @@
-name: Publish Docker Image
+name: Publish Image to Docker Hub
 
 on:
   push:
@@ -49,3 +49,21 @@ jobs:
             raphaeleze/recipex:${{ env.version }}
             raphaeleze/recipex:${{ env.version }}-${{ env.build_number }}
             raphaeleze/recipex:${{ env.version }}-${{ env.build_number }}-${{ env.commit_hash }}
+            
+      # Note: Ideally, we would push the Docker image to Amazon ECR (Elastic Container Registry).
+      #
+      # The following commented-out steps show how you would do this:
+      #
+      # - name: Authenticate Docker to Amazon ECR
+      #   run: |
+      #     aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+      #
+      # - name: Tag Docker Image for ECR
+      #   run: |
+      #     docker tag $IMAGE_TAG $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO_NAME:latest
+      #
+      # - name: Push Docker Image to ECR
+      #   run: |
+      #     docker push $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO_NAME:latest
+      #
+      # However, to avoid incurring additional AWS costs, we are currently using Docker Hub for image storage and distribution.
