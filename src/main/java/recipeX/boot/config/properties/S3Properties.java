@@ -6,7 +6,7 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @Data
-@ConfigurationProperties(prefix = "recipeX.aws.s3")
+@ConfigurationProperties(prefix = "recipex.aws.s3")
 public class S3Properties {
 
   private @NotNull String accessKey;

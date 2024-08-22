@@ -1,8 +1,8 @@
 logging:
  level:
-  recipeX: debug
+  recipex: debug
 
-recipeX:
+recipex:
  aws:
   s3:
    region:
