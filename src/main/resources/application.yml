@@ -1,0 +1,12 @@
+logging:
+ level:
+  recipeX: debug
+
+recipeX:
+ aws:
+  s3:
+   region:
+   access-key:
+   secret-key:
+   publicEndpoint:
+   url-expiration:
