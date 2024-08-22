@@ -17,4 +17,4 @@ RUN ./mvnw clean package
 EXPOSE 8080
 
 # Define the command to run the app using the JAR file
-CMD ["java", "-jar", "target/myapp.jar"]
+CMD ["java", "-jar", "target/recipex-0.0.1-SNAPSHOT.jar"]
