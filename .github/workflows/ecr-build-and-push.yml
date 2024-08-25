@@ -1,20 +1,28 @@
-name: Publish Image To AWS ECR
+name: Publish Image to Docker Hub and AWS ECR
 
-on: 
+on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
+    inputs:
+      action:
+        description: 'recipex-springboot-app ecr repo exists ?'
+        required: true
+        type: choice
+        options:
+          - yes
 
 env:
+  AWS_REGION: ${{ secrets.AWS_REGION }}
   ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
-  AWS_REGION: "us-west-2"
-  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  ECR_REPO_NAME: recipex-springboot-app # we have to create this using terraform first in recipeX-aws-tf-infra repo
+  ECR_REPO_NAME: recipex-springboot-app
 
 jobs:
-  docker_build: 
-    name: Build and Push Docker Image to ECR
+  docker_build:
+    name: Build Docker Image
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -37,27 +45,46 @@ jobs:
           echo "Build Number: ${{ env.build_number }}"
           echo "Commit Hash: ${{ env.commit_hash }}"
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
-
-      - name: Authenticate Docker to Amazon ECR
-        run: |
-          aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ env.ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
-
       - name: Build Docker Image
         run: |
           docker build -t recipex:${{ env.version }} -f ci/Dockerfile .
 
+      - name: Check if ECR Repository Exists
+        if: ${{ github.event.inputs.action == 'yes' }}
+        id: check_ecr_repo
+        run: |
+          aws ecr describe-repositories --repository-names ${{ env.ECR_REPO_NAME }} --region ${{ env.AWS_REGION }} || echo "Repository does not exist"
+        continue-on-error: true
+
+      - name: Set Repository Exists Output
+        if: ${{ github.event.inputs.action == 'yes' }}
+        id: repo_exists
+        run: |
+          if aws ecr describe-repositories --repository-names ${{ env.ECR_REPO_NAME }} --region ${{ env.AWS_REGION }}; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Cancel Job if Repository Does Not Exist
+        if: ${{ github.event.inputs.action == 'yes' && steps.repo_exists.outputs.exists == 'false' }}
+        run: |
+          echo "ECR repository does not exist. Cancelling the job."
+          exit 1
+
+      - name: Authenticate Docker to Amazon ECR
+        if: ${{ github.event.inputs.action == 'yes' && steps.repo_exists.outputs.exists == 'true' }}
+        run: |
+          aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ env.ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
+
       - name: Tag Docker Image for ECR
+        if: ${{ github.event.inputs.action == 'yes' && steps.repo_exists.outputs.exists == 'true' }}
         run: |
           IMAGE_TAG="${{ env.version }}-${{ env.build_number }}-${{ env.commit_hash }}"
           docker tag recipex:${{ env.version }} ${{ env.ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPO_NAME }}:$IMAGE_TAG
 
       - name: Push Docker Image to ECR
+        if: ${{ github.event.inputs.action == 'yes' && steps.repo_exists.outputs.exists == 'true' }}
         run: |
           IMAGE_TAG="${{ env.version }}-${{ env.build_number }}-${{ env.commit_hash }}"
           docker push ${{ env.ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPO_NAME }}:$IMAGE_TAG
