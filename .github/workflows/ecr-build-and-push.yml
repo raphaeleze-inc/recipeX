@@ -12,7 +12,7 @@ env:
 
 jobs:
   docker_build:
-    name: Build Docker Image
+    name: Build And Push To AWS ECR
     runs-on: ubuntu-latest
 
     steps:
