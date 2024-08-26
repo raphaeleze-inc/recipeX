@@ -63,10 +63,10 @@ jobs:
 
       - name: Tag Docker Image for ECR
         run: |
-          IMAGE_TAG="${{ env.version }}-${{ env.build_number }}-${{ env.commit_hash }}"
+          IMAGE_TAG="${{ env.version }}-${{ env.commit_hash }}-${{ env.build_number }}"
           docker tag recipex:${{ env.version }} ${{ env.ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPO_NAME }}:$IMAGE_TAG
 
       - name: Push Docker Image to ECR
         run: |
-          IMAGE_TAG="${{ env.version }}-${{ env.build_number }}-${{ env.commit_hash }}"
+          IMAGE_TAG="${{ env.version }}-${{ env.commit_hash }}-${{ env.build_number }}"
           docker push ${{ env.ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPO_NAME }}:$IMAGE_TAG

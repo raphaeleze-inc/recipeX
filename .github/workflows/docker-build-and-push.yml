@@ -47,8 +47,8 @@ jobs:
           push: true 
           tags: |
             raphaeleze/recipex:${{ env.version }}
-            raphaeleze/recipex:${{ env.version }}-${{ env.build_number }}
-            raphaeleze/recipex:${{ env.version }}-${{ env.build_number }}-${{ env.commit_hash }}
+            raphaeleze/recipex:${{ env.version }}-${{ env.commit_hash }}
+            raphaeleze/recipex:${{ env.version }}-${{ env.commit_hash }}-${{ env.build_number }}
             
       # Note: Ideally, we would push the Docker image to Amazon ECR (Elastic Container Registry).
       #
