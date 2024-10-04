@@ -28,8 +28,8 @@ public class RecipeService implements DefaultRecipeService {
   private final RestMapper restMapper;
 
   @Override
-  public Mono<List<DbUserRecipe>> createRecipes(UUID userId, List<RestUserRecipe> recipes) {
-    var dbUserRecipes = recipes.stream()
+  public Flux<DbUserRecipe> createRecipes(UUID userId, List<RestUserRecipe> recipes) {
+   var dbUserRecipes = recipes.stream()
         .map(restUserPost -> dbMapper.toDbDto(restUserPost
                 .setUserId(userId)
                 .setRecipeId(UUID.randomUUID()))
@@ -37,9 +37,8 @@ public class RecipeService implements DefaultRecipeService {
         .toList();
 
     return dbRecipeRepository.saveAll(dbUserRecipes)
-        .collectList()
         .doOnError(error -> log.error(POST_NOT_SAVED_MESSAGE, userId, dbUserRecipes))
-        .thenReturn(dbUserRecipes);
+        .thenMany(Flux.fromIterable(dbUserRecipes));
   }
 
   @Override

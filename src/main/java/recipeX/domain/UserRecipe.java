@@ -18,5 +18,6 @@ public class UserRecipe {
   private List<String> instructions;
   private List<String> tags;
   private String imageUrl;
+  private String imageUploadUrl;
   private LocalDateTime createdAt;
 }
