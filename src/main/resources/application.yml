@@ -1,12 +1,14 @@
 logging:
  level:
-  recipex: debug
+  recipeX-springboot-app: INFO
+  recipeX: DEBUG
 
 recipex:
  aws:
   s3:
-   region:
-   access-key:
-   secret-key:
-   publicEndpoint:
-   url-expiration:
+   region: your-aws-region
+   access-key: your-aws-acess-keys
+   secret-key: your-secret-key
+   bucket: your-s3-bucket-name
+   folder: your-s3-path-to-store-images
+   url-expiration:  5-this-could-be-any-amount-of-minutes-you-want

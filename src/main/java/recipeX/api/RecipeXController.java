@@ -12,6 +12,7 @@ import recipeX.domain.Ids;
 import recipeX.domain.Username;
 import recipeX.rest.RestRecipeXUser;
 import recipeX.rest.RestUserRecipe;
+import recipeX.service.external.DefaultS3ExternalService;
 import recipeX.service.recipe.DefaultRecipeService;
 import recipeX.service.user.DefaultUserService;
 
@@ -21,6 +22,7 @@ import recipeX.service.user.DefaultUserService;
 public class RecipeXController implements RecipeXApi {
   private final DefaultUserService userService;
   private final DefaultRecipeService recipeService;
+  private final DefaultS3ExternalService defaultS3ExternalService;
 
   @Override
   public Mono<RestRecipeXUser> createUser(Username username) {
@@ -33,7 +35,7 @@ public class RecipeXController implements RecipeXApi {
   }
 
   @Override
-  public Mono<List<DbUserRecipe>> createRecipes(UUID userId, List<RestUserRecipe> recipes) {
+  public Flux<DbUserRecipe> createRecipes(UUID userId, List<RestUserRecipe>  recipes) {
     return recipeService.createRecipes(userId, recipes);
   }
 
@@ -62,6 +64,14 @@ public class RecipeXController implements RecipeXApi {
     return recipeService.deleteRecipe(ids);
   }
 
+  @Override
+  public Mono<String> uploadImage(String recipeId) {
+    return defaultS3ExternalService.uploadImage(recipeId);
+  }
+  @Override
+  public Mono<String> getImage(String recipeId) {
+    return defaultS3ExternalService.getImage(recipeId);
+  }
   @Override
   public Mono<Void> deleteUser(UUID userId) {
     return userService.deleteUser(userId);

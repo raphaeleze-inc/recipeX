@@ -22,6 +22,10 @@ public class UserService implements DefaultUserService {
   private static final String USER_NOT_DELETED_MESSAGE = "Error deleting user {}";
   private static final String RECIPE_NOT_DELETED_MESSAGE = "Error deleting recipe {}";
   private static final String USER_NOT_SAVED_MESSAGE = "Error saving user {}";
+  private static final String USER_SAVED_MESSAGE = "User {} saved successfully";
+  private static final String USER_RETRIEVED_MESSAGE = "User {} retrieved successfully";
+  private static final String USER_NOT_FOUND_MESSAGE = "User {} not found";
+
   private final DbUserRepository dbUserRepository;
   private final DbRecipeRepository dbRecipeRepository;
   private final DbMapper dbMapper;
@@ -34,9 +38,12 @@ public class UserService implements DefaultUserService {
         .setId(UUID.randomUUID())
         .setUsername(username);
 
+    log.info("Creating user with username: {}", username);
+
     return Mono.just(user)
         .map(dbMapper::toDbDto)
         .flatMap(dbUserRepository::save)
+        .doOnSuccess(savedUser -> log.info(USER_SAVED_MESSAGE, user.getId()))
         .doOnError(error -> log.error(USER_NOT_SAVED_MESSAGE, user.getId()))
         .map(restMapper::toRestDto);
   }
@@ -44,11 +51,15 @@ public class UserService implements DefaultUserService {
   @Override
   public Mono<RestRecipeXUser> getUser(UUID userId) {
     var userStringId = uuidMapper.toString(userId);
-    var recipes = dbRecipeRepository.findByUserId(userStringId)
-        .collectList().block(); // TODO : REMOVE BLOCK
+
+    log.info("Retrieving user with ID: {}", userId);
 
     return dbUserRepository.findById(userStringId)
-        .map(recipeX -> recipeX.setRecipes(recipes))
+        .flatMap(dbUser -> dbRecipeRepository.findByUserId(userStringId)
+            .collectList()
+            .map(dbUser::setRecipes))
+        .doOnSuccess(user -> log.info(USER_RETRIEVED_MESSAGE, userId))
+        .doOnError(error -> log.error(USER_NOT_FOUND_MESSAGE, userId))
         .map(restMapper::toRestDto);
   }
 
@@ -56,11 +67,13 @@ public class UserService implements DefaultUserService {
   public Mono<Void> deleteUser(UUID userId) {
     var user = uuidMapper.toString(userId);
 
+    log.info("Deleting user with ID: {}", userId);
+
     return dbUserRepository.deleteById(user)
-        .doOnError(info -> log.error(USER_NOT_DELETED_MESSAGE, user))
         .doOnSuccess(info -> log.info(USER_DELETED_MESSAGE, user))
+        .doOnError(info -> log.error(USER_NOT_DELETED_MESSAGE, user))
         .then(dbRecipeRepository.deleteById(user))
-        .doOnError(info -> log.error(RECIPE_NOT_DELETED_MESSAGE, user))
-        .doOnSuccess(info -> log.info(RECIPE_DELETED_MESSAGE, user));
+        .doOnSuccess(info -> log.info(RECIPE_DELETED_MESSAGE, user))
+        .doOnError(info -> log.error(RECIPE_NOT_DELETED_MESSAGE, user));
   }
 }

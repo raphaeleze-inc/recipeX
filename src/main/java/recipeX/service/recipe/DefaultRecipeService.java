@@ -9,7 +9,7 @@ import recipeX.domain.Ids;
 import recipeX.rest.RestUserRecipe;
 
 public interface DefaultRecipeService {
-  Mono<List<DbUserRecipe>> createRecipes(UUID userId, List<RestUserRecipe> recipes);
+ Flux<DbUserRecipe> createRecipes(UUID userId, List<RestUserRecipe> recipes);
 
   Mono<RestUserRecipe> getRecipe(String recipeId);
 

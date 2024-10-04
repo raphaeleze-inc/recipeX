@@ -45,6 +45,47 @@ This REST API allows users to manage recipes. Users can create, read, update, an
    - Endpoint: DELETE /recipes/{id}/ingredients/{ingredientId}
    - Response: Updated recipe object with removed ingredient
 
+9. **Upload Image for a Recipe**
+   - **Method:** `POST`
+   - **Endpoint:** `/image/{recipeId}`
+   - **Response:** presigned URL to upload the image
+
+10. **Get Image for a Recipe**
+   - **Method:** `GET`
+   - **Endpoint:** `/image/{recipeId}`
+   - **Response:** presigned URL of the uploaded recipe image
+
+
+### Error Handling
+
+- The API will return standard HTTP status codes to indicate the success or failure of requests.
+   - `200 OK` for successful operations
+   - `400 Bad Request` for validation errors
+   - `404 Not Found` for requests referencing non-existent resources
+   - `500 Internal Server Error` for unexpected issues
+
+
+### API Documentation
+
+- For more information on usage, refer to the [Spring REST documentation](https://spring.io/guides/tutorials/rest-with-spring-boot/).
+
+### Package Structure
+
+```plaintext
+recipeX.api
+    ├── RecipeXApi.java
+recipeX.db
+    ├── DbUserRecipe.java
+recipeX.domain
+    ├── Ids.java
+    ├── Username.java
+recipeX.rest
+    ├── RestRecipeXUser.java
+    ├── RestUserRecipe.java
+```
+
+
+
 **Example Usage:**
 
 - Users can create and manage their recipe collections using the API.
