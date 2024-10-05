@@ -45,12 +45,12 @@ This REST API allows users to manage recipes. Users can create, read, update, an
    - Endpoint: DELETE /recipes/{id}/ingredients/{ingredientId}
    - Response: Updated recipe object with removed ingredient
 
-9. **Upload Image for a Recipe**
+9. **Upload Image for a Recipe** *Done
    - **Method:** `POST`
    - **Endpoint:** `/image/{recipeId}`
    - **Response:** presigned URL to upload the image
 
-10. **Get Image for a Recipe**
+10. **Get Image for a Recipe** *Done
    - **Method:** `GET`
    - **Endpoint:** `/image/{recipeId}`
    - **Response:** presigned URL of the uploaded recipe image
