@@ -29,7 +29,7 @@ public class RecipeService implements DefaultRecipeService {
 
   @Override
   public Flux<DbUserRecipe> createRecipes(UUID userId, List<RestUserRecipe> recipes) {
-   var dbUserRecipes = recipes.stream()
+    var dbUserRecipes = recipes.stream()
         .map(restUserPost -> dbMapper.toDbDto(restUserPost
                 .setUserId(userId)
                 .setRecipeId(UUID.randomUUID()))

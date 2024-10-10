@@ -13,6 +13,7 @@ public interface UuidMapper {
 
   /**
    * Converts a string to a UUID.
+   *
    * @param str the string to convert
    * @return the UUID
    */
@@ -24,6 +25,7 @@ public interface UuidMapper {
 
   /**
    * Converts a UUID to a string.
+   *
    * @param uuid the UUID to convert
    * @return the string
    */

@@ -25,7 +25,7 @@ public interface RecipeXApi {
 
   @PostMapping("/recipes/{userId}")
   Flux<DbUserRecipe> createRecipes(@PathVariable("userId") UUID userId,
-                                         @RequestBody List<RestUserRecipe>  restUserRecipes);
+                                   @RequestBody List<RestUserRecipe> restUserRecipes);
 
   @GetMapping("/user/{userId}")
   Mono<RestRecipeXUser> getUser(@PathVariable("userId") UUID userId);
@@ -44,11 +44,12 @@ public interface RecipeXApi {
 
   @DeleteMapping("/recipe")
   Mono<Void> deleteRecipe(@Valid @RequestBody Ids ids);
+
   @PostMapping("/image/{recipeId}")
-  Mono<String> uploadImage(@PathVariable("recipeId")  String recipeId);
+  Mono<String> uploadImage(@PathVariable("recipeId") String recipeId);
 
   @GetMapping("/image/{recipeId}")
-  Mono<String> getImage(@PathVariable("recipeId")  String recipeId);
+  Mono<String> getImage(@PathVariable("recipeId") String recipeId);
 
   @DeleteMapping("/user/{userId}")
   Mono<Void> deleteUser(@PathVariable("userId") UUID userId);

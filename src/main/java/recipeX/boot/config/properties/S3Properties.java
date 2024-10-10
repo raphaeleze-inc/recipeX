@@ -1,6 +1,6 @@
 package recipeX.boot.config.properties;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -8,8 +8,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "recipex.aws.s3")
 public class S3Properties {
 
-  private @NotNull String accessKey;
-  private @NotNull String secretKey;
+  private @NotBlank String accessKey;
+  private @NotBlank String secretKey;
   private String region;
   private String publicEndpoint;
   private Long urlExpiration;

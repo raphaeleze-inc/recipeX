@@ -2,7 +2,7 @@ package recipeX.rest;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -14,9 +14,9 @@ import lombok.experimental.Accessors;
 @JsonInclude(Include.NON_NULL)
 public class RestUserRecipe {
 
-  @NotNull
+  @NotBlank
   private UUID recipeId;
-  @NotNull
+  @NotBlank
   private UUID userId;
   private String title;
   private String description;

@@ -35,7 +35,7 @@ public class RecipeXController implements RecipeXApi {
   }
 
   @Override
-  public Flux<DbUserRecipe> createRecipes(UUID userId, List<RestUserRecipe>  recipes) {
+  public Flux<DbUserRecipe> createRecipes(UUID userId, List<RestUserRecipe> recipes) {
     return recipeService.createRecipes(userId, recipes);
   }
 
@@ -68,10 +68,12 @@ public class RecipeXController implements RecipeXApi {
   public Mono<String> uploadImage(String recipeId) {
     return defaultS3ExternalService.uploadImage(recipeId);
   }
+
   @Override
   public Mono<String> getImage(String recipeId) {
     return defaultS3ExternalService.getImage(recipeId);
   }
+
   @Override
   public Mono<Void> deleteUser(UUID userId) {
     return userService.deleteUser(userId);
